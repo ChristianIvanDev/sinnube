@@ -370,3 +370,62 @@ select {
     display: none;
   }
 }
+
+/* ---------- Zona de archivos ---------- */
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 24px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+  color: var(--muted);
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.drop[data-over='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.drop-label {
+  margin: 8px 0 0;
+  font-size: 17px;
+  font-weight: 550;
+  color: var(--ink);
+}
+
+.drop-hint {
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+
+/* ---------- Aviso flotante ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 50;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.35);
+  transform: translateX(-50%);
+  animation: toast-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}

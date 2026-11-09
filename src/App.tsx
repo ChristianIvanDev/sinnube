@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Toaster } from './components/Toaster';
 import { TOOLS, toolFromHash, type ToolInfo } from './tools';
 
 function readTheme(): 'light' | 'dark' | null {
@@ -84,6 +85,7 @@ export default function App() {
           Código abierto · MIT
         </a>
       </footer>
+      <Toaster />
     </div>
   );
 }
