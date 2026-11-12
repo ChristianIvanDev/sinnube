@@ -15,7 +15,7 @@ export const TOOLS: ToolInfo[] = [
     summary: 'Varios PDF en uno',
     title: 'Une varios PDF en uno solo',
     description: 'Arrastra tus archivos, ordénalos como quieras y descarga un único PDF. Nada se sube a internet.',
-    ready: false,
+    ready: true,
   },
   {
     id: 'dividir',

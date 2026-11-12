@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Toaster } from './components/Toaster';
+import { MergeTool } from './tools/MergeTool';
 import { TOOLS, toolFromHash, type ToolInfo } from './tools';
 
 function readTheme(): 'light' | 'dark' | null {
@@ -90,7 +91,8 @@ export default function App() {
   );
 }
 
-function ToolView(_: { tool: ToolInfo }) {
+function ToolView({ tool }: { tool: ToolInfo }) {
+  if (tool.id === 'unir') return <MergeTool />;
   return (
     <section className="card soon">
       <p>Esta herramienta está en construcción.</p>

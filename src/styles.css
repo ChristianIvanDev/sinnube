@@ -429,3 +429,101 @@ select {
     transform: translate(-50%, 8px);
   }
 }
+
+/* ---------- Lista de archivos ---------- */
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.file-list {
+  overflow: hidden;
+}
+
+.file-list-head,
+.file-list-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 14px 18px;
+  font-size: 14px;
+}
+
+.file-list-head {
+  border-bottom: 1px solid var(--line);
+}
+
+.file-list-foot {
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.file-list ol {
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+
+.file-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 18px;
+  cursor: grab;
+  transition: background-color 120ms ease, opacity 120ms ease;
+}
+
+.file-list li:hover {
+  background: var(--surface-2);
+}
+
+.file-list li[data-dragging='true'] {
+  opacity: 0.4;
+}
+
+.file-list li[data-error='true'] .file-meta {
+  color: var(--danger);
+}
+
+.file-index {
+  width: 20px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.file-icon {
+  flex: none;
+}
+
+.file-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.file-meta {
+  font-size: 13px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.file-actions .btn {
+  font-size: 16px;
+}
