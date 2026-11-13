@@ -22,8 +22,8 @@ export const TOOLS: ToolInfo[] = [
     name: 'Dividir PDF',
     summary: 'Extrae y reordena páginas',
     title: 'Extrae, reordena o elimina páginas',
-    description: 'Elige las páginas que quieres conservar, cámbialas de orden y descarga el resultado.',
-    ready: false,
+    description: 'Escribe qué páginas quieres conservar, en el orden que quieras, y descarga el resultado.',
+    ready: true,
   },
   {
     id: 'comprimir',
