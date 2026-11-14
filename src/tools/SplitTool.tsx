@@ -2,17 +2,19 @@ import { useMemo, useState } from 'react';
 import { FileDrop, type DroppedFile } from '../components/FileDrop';
 import { toast } from '../components/Toaster';
 import { downloadBlob } from '../lib/download';
-import { formatBytes, withSuffix } from '../lib/format';
+import { formatBytes, withExtension, withSuffix } from '../lib/format';
 import { countPages, mergePdfs, PdfError } from '../lib/pdf';
 import { describePages, parseRanges } from '../lib/ranges';
+import { createZip } from '../lib/zip';
 import { PdfIcon } from './MergeTool';
 
-const EXAMPLES = ['1-3, 5', 'impares', '10-1', '2-'];
+const EXAMPLES = ['1-3, 5', 'impares', '10-1', '2-', '1, 2, 3'];
 
 export function SplitTool() {
   const [doc, setDoc] = useState<{ file: File; pages: number } | null>(null);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<'single' | 'groups'>('single');
 
   const load = async ([f]: DroppedFile[]) => {
     try {
@@ -25,15 +27,30 @@ export function SplitTool() {
   };
 
   const parsed = useMemo(() => (doc ? parseRanges(input, doc.pages) : null), [doc, input]);
+  const groups = parsed && !parsed.error ? parsed.groups.length : 0;
+
+  const fileLabel = (pages: number[]) => describePages(pages).replace(/[–, ]+/g, '-').slice(0, 60);
 
   const extract = async () => {
     if (!doc || !parsed || parsed.error) return;
     setBusy(true);
     try {
-      const bytes = await mergePdfs([{ name: doc.file.name, data: await doc.file.arrayBuffer(), pages: parsed.pages }]);
-      const label = describePages(parsed.pages).replace(/[–, ]+/g, '-');
-      downloadBlob(bytes, withSuffix(doc.file.name, `paginas-${label}`.slice(0, 60)), 'application/pdf');
-      toast(`Listo: ${parsed.pages.length} páginas, ${formatBytes(bytes.byteLength)}`);
+      const data = await doc.file.arrayBuffer();
+      if (mode === 'single' || parsed.groups.length === 1) {
+        const bytes = await mergePdfs([{ name: doc.file.name, data, pages: parsed.pages }]);
+        downloadBlob(bytes, withSuffix(doc.file.name, `paginas-${fileLabel(parsed.pages)}`), 'application/pdf');
+        toast(`Listo: ${parsed.pages.length} páginas, ${formatBytes(bytes.byteLength)}`);
+      } else {
+        // Un PDF por cada grupo separado por comas, empaquetados en un solo ZIP.
+        const entries = [];
+        for (const group of parsed.groups) {
+          const bytes = await mergePdfs([{ name: doc.file.name, data, pages: group }]);
+          entries.push({ name: withSuffix(doc.file.name, `paginas-${fileLabel(group)}`), data: bytes });
+        }
+        const zip = createZip(entries);
+        downloadBlob(zip, withExtension(withSuffix(doc.file.name, 'dividido'), 'zip'), 'application/zip');
+        toast(`Listo: ${entries.length} PDF en un ZIP de ${formatBytes(zip.byteLength)}`);
+      }
     } catch (err) {
       toast(err instanceof PdfError ? err.message : 'Algo salió mal al extraer las páginas.');
     } finally {
@@ -96,9 +113,30 @@ export function SplitTool() {
             `Se ${parsed!.pages.length === 1 ? 'incluirá 1 página' : `incluirán ${parsed!.pages.length} páginas`}: ${describePages(parsed!.pages)}`}
         </p>
 
+        <fieldset className="radio-group">
+          <legend>Resultado</legend>
+          <label>
+            <input type="radio" name="split-mode" checked={mode === 'single'} onChange={() => setMode('single')} />
+            <span>
+              <strong>Un solo PDF</strong>
+              <span className="muted">Todas las páginas elegidas, en ese orden</span>
+            </span>
+          </label>
+          <label>
+            <input type="radio" name="split-mode" checked={mode === 'groups'} onChange={() => setMode('groups')} />
+            <span>
+              <strong>Un PDF por cada grupo</strong>
+              <span className="muted">
+                Cada parte separada por comas es un archivo
+                {groups > 1 ? ` (${groups} archivos en un ZIP)` : ''}
+              </span>
+            </span>
+          </label>
+        </fieldset>
+
         <div className="split-foot">
           <button className="btn btn-primary" onClick={extract} disabled={!!parsed?.error || busy}>
-            {busy ? 'Procesando…' : 'Extraer y descargar'}
+            {busy ? 'Procesando…' : mode === 'groups' && groups > 1 ? `Dividir en ${groups} archivos` : 'Extraer y descargar'}
           </button>
         </div>
       </section>
