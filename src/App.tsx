@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Toaster } from './components/Toaster';
 import { MergeTool } from './tools/MergeTool';
 import { SplitTool } from './tools/SplitTool';
+import { CompressTool } from './tools/CompressTool';
 import { TOOLS, toolFromHash, type ToolInfo } from './tools';
 
 function readTheme(): 'light' | 'dark' | null {
@@ -95,6 +96,7 @@ export default function App() {
 function ToolView({ tool }: { tool: ToolInfo }) {
   if (tool.id === 'unir') return <MergeTool />;
   if (tool.id === 'dividir') return <SplitTool />;
+  if (tool.id === 'comprimir') return <CompressTool />;
   return (
     <section className="card soon">
       <p>Esta herramienta está en construcción.</p>

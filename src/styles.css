@@ -667,3 +667,141 @@ select {
 .radio-group label .muted {
   font-size: 12px;
 }
+
+/* ---------- Comprimir imágenes ---------- */
+
+.settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px 18px;
+}
+
+.settings input[type='range'] {
+  height: 42px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  accent-color: var(--accent);
+}
+
+.image-row {
+  cursor: default !important;
+}
+
+.thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: repeating-conic-gradient(var(--surface-2) 0 25%, var(--surface) 0 50%) 0 0 / 12px 12px;
+  cursor: zoom-in;
+}
+
+.thumb:disabled {
+  cursor: default;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.saving {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: 500 12px var(--mono);
+}
+
+.compare {
+  overflow: hidden;
+}
+
+.compare-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 18px;
+  font-size: 13px;
+}
+
+.compare-stage {
+  position: relative;
+  display: grid;
+  max-height: 60vh;
+  background: repeating-conic-gradient(var(--surface-2) 0 25%, var(--surface) 0 50%) 0 0 / 16px 16px;
+  user-select: none;
+}
+
+.compare-stage img {
+  grid-area: 1 / 1;
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  display: block;
+}
+
+.compare-after {
+  clip-path: inset(0 0 0 var(--pos));
+}
+
+.compare-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  width: 2px;
+  margin-left: -1px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+  pointer-events: none;
+}
+
+.compare-tag {
+  position: absolute;
+  top: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.6);
+  color: #fff;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.compare-tag-l {
+  left: 10px;
+}
+
+.compare-tag-r {
+  right: 10px;
+}
+
+.compare-stage input[type='range'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+
+@media (max-width: 760px) {
+  .settings {
+    grid-template-columns: 1fr;
+  }
+
+  .image-row .btn:not(.icon-btn) {
+    display: none;
+  }
+}

@@ -30,8 +30,8 @@ export const TOOLS: ToolInfo[] = [
     name: 'Comprimir imágenes',
     summary: 'JPG, PNG y WebP más ligeros',
     title: 'Comprime y redimensiona imágenes',
-    description: 'Reduce el peso de tus fotos en lote, con vista previa de antes y después.',
-    ready: false,
+    description: 'Reduce el peso de tus fotos en lote y compara el resultado antes de descargarlo.',
+    ready: true,
   },
   {
     id: 'metadatos',
