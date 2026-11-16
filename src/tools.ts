@@ -35,11 +35,11 @@ export const TOOLS: ToolInfo[] = [
   },
   {
     id: 'metadatos',
-    name: 'Quitar metadatos',
+    name: 'Ver metadatos',
     summary: 'Ubicación GPS, cámara y fecha',
-    title: 'Mira y elimina los metadatos ocultos',
-    description: 'Las fotos guardan dónde y con qué cámara se tomaron. Revísalo y bórralo sin perder calidad.',
-    ready: false,
+    title: 'Mira lo que revelan tus fotos',
+    description: 'Las fotos guardan dónde y con qué cámara se tomaron. Revísalo antes de compartirlas.',
+    ready: true,
   },
 ];
 
