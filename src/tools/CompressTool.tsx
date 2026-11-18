@@ -3,7 +3,9 @@ import { FileDrop, type DroppedFile } from '../components/FileDrop';
 import { toast } from '../components/Toaster';
 import { downloadBlob } from '../lib/download';
 import { formatBytes, formatSaving, withExtension } from '../lib/format';
-import { canEncode, compressImage, EXT, outputMime, type CompressOptions, type OutputFormat } from '../lib/image';
+import { mapConcurrent } from '../lib/concurrency';
+import { canEncode, EXT, outputMime, type CompressOptions, type OutputFormat } from '../lib/image';
+import { compress, compressionLanes } from '../lib/imageWorker';
 import { IMAGE_KINDS } from '../lib/sniff';
 import { createZip } from '../lib/zip';
 
@@ -37,6 +39,7 @@ export function CompressTool() {
   const [avif, setAvif] = useState(false);
   const [compareId, setCompareId] = useState<string | null>(null);
   const run = useRef(0);
+  const signal = useRef({ cancelled: false });
 
   useEffect(() => {
     void canEncode('image/avif').then(setAvif);
@@ -56,11 +59,16 @@ export function CompressTool() {
 
   const process = async (targets: Item[], opts: CompressOptions) => {
     const ticket = ++run.current;
-    for (const item of targets) {
+    signal.current.cancelled = true; // la pasada anterior deja de tomar imágenes nuevas
+    const mine = { cancelled: false };
+    signal.current = mine;
+    setItems((xs) => xs.map((x) => (targets.some((t) => t.id === x.id) ? { ...x, status: 'pending' } : x)));
+    // Varias imágenes a la vez, cada una en su propio Web Worker.
+    await mapConcurrent(targets, compressionLanes(), async (item) => {
       if (ticket !== run.current) return; // los ajustes cambiaron: empieza otra pasada
       setItems((xs) => xs.map((x) => (x.id === item.id ? { ...x, status: 'working' } : x)));
       try {
-        const r = await compressImage(item.file, opts);
+        const r = await compress(item.file, opts);
         // Si recomprimir en el mismo formato no ahorra nada, se conserva el original.
         const sameShape = r.width === r.originalWidth && r.height === r.originalHeight;
         const kept = sameShape && r.blob.size >= item.file.size && outputMime(item.file.type, opts.format) === item.file.type;
@@ -78,9 +86,10 @@ export function CompressTool() {
           }),
         );
       } catch {
+        if (ticket !== run.current) return;
         setItems((xs) => xs.map((x) => (x.id === item.id ? { ...x, status: 'error', error: 'No se pudo procesar esta imagen.' } : x)));
       }
-    }
+    }, mine);
   };
 
   const add = (files: DroppedFile[]) => {
@@ -192,7 +201,9 @@ export function CompressTool() {
                 </>
               )}
             </strong>
-            <span className="muted">{working ? 'Procesando…' : 'Toca una imagen para compararla'}</span>
+            <span className="muted">
+              {working ? `Procesando ${done.length} de ${items.length} · ${compressionLanes()} ${compressionLanes() === 1 ? 'hilo' : 'hilos'}` : 'Toca una imagen para compararla'}
+            </span>
           </div>
           <ol>
             {items.map((x) => (

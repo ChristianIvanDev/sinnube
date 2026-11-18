@@ -90,6 +90,7 @@ export async function compressImage(file: Blob, options: CompressOptions): Promi
     ctx.drawImage(bitmap, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, mime, options.quality));
     if (!blob) throw new Error('El navegador no pudo codificar la imagen.');
+    if (blob.type !== mime) throw new Error(`Este navegador no puede generar ${mime}.`);
     return { blob, width, height, originalWidth: bitmap.width, originalHeight: bitmap.height };
   } finally {
     bitmap.close();
