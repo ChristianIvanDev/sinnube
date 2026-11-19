@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { FileDrop, type DroppedFile } from '../components/FileDrop';
+import { PageGrid } from '../components/PageGrid';
 import { toast } from '../components/Toaster';
 import { downloadBlob } from '../lib/download';
 import { formatBytes, withExtension, withSuffix } from '../lib/format';
@@ -11,15 +12,16 @@ import { PdfIcon } from './MergeTool';
 const EXAMPLES = ['1-3, 5', 'impares', '10-1', '2-', '1, 2, 3'];
 
 export function SplitTool() {
-  const [doc, setDoc] = useState<{ file: File; pages: number } | null>(null);
+  const [doc, setDoc] = useState<{ file: File; pages: number; data: ArrayBuffer } | null>(null);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<'single' | 'groups'>('single');
 
   const load = async ([f]: DroppedFile[]) => {
     try {
-      const pages = await countPages(await f.file.arrayBuffer(), f.file.name);
-      setDoc({ file: f.file, pages });
+      const data = await f.file.arrayBuffer();
+      const pages = await countPages(data, f.file.name);
+      setDoc({ file: f.file, pages, data });
       setInput(pages > 1 ? `1-${Math.min(pages, 3)}` : '1');
     } catch (err) {
       toast(err instanceof PdfError ? err.message : 'No se pudo leer el PDF.');
@@ -28,6 +30,13 @@ export function SplitTool() {
 
   const parsed = useMemo(() => (doc ? parseRanges(input, doc.pages) : null), [doc, input]);
   const groups = parsed && !parsed.error ? parsed.groups.length : 0;
+
+  // Tocar una miniatura la agrega al final o la quita; el texto se reescribe para que ambos coincidan.
+  const toggle = (page: number) => {
+    const current = parsed && !parsed.error ? parsed.pages : [];
+    const next = current.includes(page) ? current.filter((p) => p !== page) : [...current, page];
+    setInput(describePages(next));
+  };
 
   const fileLabel = (pages: number[]) => describePages(pages).replace(/[–, ]+/g, '-').slice(0, 60);
 
@@ -112,6 +121,8 @@ export function SplitTool() {
           {parsed?.error ??
             `Se ${parsed!.pages.length === 1 ? 'incluirá 1 página' : `incluirán ${parsed!.pages.length} páginas`}: ${describePages(parsed!.pages)}`}
         </p>
+
+        <PageGrid data={doc.data} total={doc.pages} selected={parsed && !parsed.error ? parsed.pages : []} onToggle={toggle} />
 
         <fieldset className="radio-group">
           <legend>Resultado</legend>
