@@ -1,0 +1,12 @@
+{
+  "name": "Sinnube",
+  "short_name": "Sinnube",
+  "description": "Herramientas de PDF e imágenes que funcionan en tu navegador, sin subir tus archivos.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111312",
+  "theme_color": "#111312",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

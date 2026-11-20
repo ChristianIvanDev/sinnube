@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type DragEvent } from 'react';
+import { markFilesAdded } from '../lib/network';
 import { KIND_LABEL, sniffFile, type FileKind } from '../lib/sniff';
 
 export interface DroppedFile {
@@ -38,7 +39,10 @@ export function FileDrop({ accept, multiple = true, label, hint, onFiles, onReje
     const checked = await Promise.all(files.map(async (file) => ({ file, kind: await sniffFile(file) })));
     const ok = checked.filter((f) => accept.includes(f.kind));
     const bad = checked.filter((f) => !accept.includes(f.kind)).map((f) => f.file.name);
-    if (ok.length) onFiles(ok.map((f) => ({ ...f, id: `f${++counter}` })));
+    if (ok.length) {
+      markFilesAdded();
+      onFiles(ok.map((f) => ({ ...f, id: `f${++counter}` })));
+    }
     if (bad.length) onRejected?.(bad);
   };
 

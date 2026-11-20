@@ -1023,3 +1023,47 @@ select {
   line-height: 22px;
   text-align: center;
 }
+
+/* ---------- Indicador de privacidad ---------- */
+
+.privacy {
+  position: relative;
+}
+
+button.privacy-pill {
+  border: 0;
+  cursor: pointer;
+}
+
+button.privacy-pill:hover {
+  filter: brightness(0.97);
+}
+
+.privacy-pill[data-alert='true'] {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.privacy-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  width: min(340px, calc(100vw - 32px));
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.privacy-pop p,
+.privacy-pop ul {
+  margin: 8px 0 0;
+}
+
+.privacy-pop ul {
+  padding-left: 18px;
+}
+
+.privacy-pop .mono {
+  font-weight: 600;
+}

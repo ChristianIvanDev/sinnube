@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PrivacyBadge } from './components/PrivacyBadge';
 import { Toaster } from './components/Toaster';
 import { MergeTool } from './tools/MergeTool';
 import { SplitTool } from './tools/SplitTool';
@@ -53,7 +54,7 @@ export default function App() {
           <span>Sinnube</span>
         </a>
         <div className="topbar-actions">
-          <span className="privacy-pill">Tus archivos no salen de tu equipo</span>
+          <PrivacyBadge />
           <button className="btn btn-ghost icon-btn" aria-label="Cambiar tema" onClick={toggleTheme}>
             <ThemeIcon />
           </button>
