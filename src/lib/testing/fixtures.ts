@@ -74,13 +74,13 @@ export function buildTiff({ little = true, ifd0, exif, gps }: TiffSpec): Uint8Ar
 }
 
 /** EXIF de ejemplo: un teléfono en el Zócalo de Ciudad de México. */
-export function sampleTiff(little = true): Uint8Array {
+export function sampleTiff(little = true, orientation = 6): Uint8Array {
   return buildTiff({
     little,
     ifd0: [
       { tag: 0x010f, type: 2, value: 'Apple' },
       { tag: 0x0110, type: 2, value: 'iPhone 15 Pro' },
-      { tag: 0x0112, type: 3, value: 6 },
+      { tag: 0x0112, type: 3, value: orientation },
       { tag: 0x0131, type: 2, value: '17.5.1' },
       { tag: 0x013b, type: 2, value: 'Ana Torres' },
     ],
@@ -115,15 +115,16 @@ function jpegSegment(marker: number, payload: Uint8Array): Uint8Array {
 }
 
 /** JPG mínimo (no decodificable, pero con estructura válida) con EXIF, XMP, comentario y perfil ICC. */
-export function sampleJpeg(little = true): Uint8Array {
+export function sampleJpeg(little = true, orientation = 6): Uint8Array {
   return concat(
     new Uint8Array([0xff, 0xd8]),
     jpegSegment(0xe0, concat(ascii('JFIF\0'), new Uint8Array([1, 1, 0, 0, 1, 0, 1, 0, 0]))),
-    jpegSegment(0xe1, concat(ascii('Exif\0\0'), sampleTiff(little))),
+    jpegSegment(0xe1, concat(ascii('Exif\0\0'), sampleTiff(little, orientation))),
     jpegSegment(0xe1, ascii('http://ns.adobe.com/xap/1.0/\0<x:xmpmeta/>')),
     jpegSegment(0xe2, concat(ascii('ICC_PROFILE\0'), new Uint8Array([1, 1, 9, 9, 9]))),
     jpegSegment(0xfe, ascii('Foto de las vacaciones')),
     jpegSegment(0xdb, new Uint8Array(65)), // tabla de cuantización
+    jpegSegment(0xc0, new Uint8Array([8, 0, 3, 0, 4, 1, 1, 0x11, 0])), // SOF0: 4×3 px, 1 componente
     new Uint8Array([0xff, 0xda, 0, 8, 1, 1, 0, 0, 0x3f, 0, 0x12, 0x34, 0x56, 0xff, 0xd9]),
   );
 }

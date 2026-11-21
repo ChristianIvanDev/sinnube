@@ -4,6 +4,7 @@ import { Toaster } from './components/Toaster';
 import { MergeTool } from './tools/MergeTool';
 import { SplitTool } from './tools/SplitTool';
 import { CompressTool } from './tools/CompressTool';
+import { ImagesToPdfTool } from './tools/ImagesToPdfTool';
 import { MetadataTool } from './tools/MetadataTool';
 import { TOOLS, toolFromHash, type ToolInfo } from './tools';
 
@@ -98,6 +99,7 @@ export default function App() {
 function ToolView({ tool }: { tool: ToolInfo }) {
   if (tool.id === 'unir') return <MergeTool />;
   if (tool.id === 'dividir') return <SplitTool />;
+  if (tool.id === 'imagenes-pdf') return <ImagesToPdfTool />;
   if (tool.id === 'comprimir') return <CompressTool />;
   if (tool.id === 'metadatos') return <MetadataTool />;
   return (

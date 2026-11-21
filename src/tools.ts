@@ -26,6 +26,14 @@ export const TOOLS: ToolInfo[] = [
     ready: true,
   },
   {
+    id: 'imagenes-pdf',
+    name: 'Imágenes a PDF',
+    summary: 'Fotos o escaneos en un PDF',
+    title: 'Convierte imágenes en un PDF',
+    description: 'Ideal para documentos fotografiados con el celular: cada imagen es una página, en el orden que elijas.',
+    ready: true,
+  },
+  {
     id: 'comprimir',
     name: 'Comprimir imágenes',
     summary: 'JPG, PNG y WebP más ligeros',
