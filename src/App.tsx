@@ -27,6 +27,15 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
+  // En móvil la navegación es una fila desplazable: mantenemos visible la herramienta activa.
+  useEffect(() => {
+    const link = document.querySelector<HTMLElement>('.toolnav a[aria-current="page"]');
+    const nav = link?.parentElement;
+    if (link && nav && nav.scrollWidth > nav.clientWidth) {
+      nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+    }
+  }, [tool]);
+
   useEffect(() => {
     document.title = `${tool.name} · Sinnube`;
   }, [tool]);

@@ -952,7 +952,7 @@ select {
   gap: 14px;
   max-height: 520px;
   margin: 0;
-  padding: 4px 2px;
+  padding: 8px 6px; /* espacio para el contorno de las páginas elegidas */
   overflow-y: auto;
   list-style: none;
   overscroll-behavior: contain;
