@@ -884,8 +884,8 @@ select {
   align-items: baseline;
   gap: 4px 12px;
   padding: 10px 14px;
-  border-left: 3px solid var(--danger);
-  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+  border-radius: 10px;
   background: var(--danger-soft);
   font-size: 14px;
 }
